@@ -31,7 +31,9 @@
 #ifdef __cplusplus
 typedef bool boolean;
 #else
-typedef enum {false, true} boolean;
+typedef int boolean;
+#define false 0
+#define true 1
 #endif
 typedef unsigned char byte;
 #endif
@@ -39,7 +41,18 @@ typedef unsigned char byte;
 
 // Predefined with some OS.
 #ifdef LINUX
-include <values.h>
+#include <limits.h>
+#ifndef MININT
+#define MININT INT_MIN
+#endif
+
+#ifndef MAXINT
+#define MAXINT INT_MAX
+
+#define MAXCHAR		((char)0x7f)
+#define MAXSHORT	((short)0x7fff)
+#endif
+
 #else
 #define MAXCHAR		((char)0x7f)
 #define MAXSHORT	((short)0x7fff)

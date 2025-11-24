@@ -30,6 +30,7 @@ static const char rcsid[] = "$Id: d_main.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 #define	BGCOLOR		7
 #define	FGCOLOR		8
 
+#include "debug.h"
 
 #ifdef NORMALUNIX
 #include <stdio.h>
@@ -560,10 +561,10 @@ void D_AddFile (char *file)
 // to determine whether registered/commercial features
 // should be executed (notably loading PWAD's).
 //
-void IdentifyVersion (void)
+void IdentifyVersion (char* wad_path)
 {
 
-    char*	doom1wad;
+    char*	doom1wad = wad_path;
     char*	doomwad;
     char*	doomuwad;
     char*	doom2wad;
@@ -592,8 +593,8 @@ void IdentifyVersion (void)
     sprintf(doomwad, "%s/doom.wad", doomwaddir);
     
     // Shareware.
-    doom1wad = malloc(strlen(doomwaddir)+1+9+1);
-    sprintf(doom1wad, "%s/doom1.wad", doomwaddir);
+    //doom1wad = malloc(strlen(doomwaddir)+1+9+1);
+    //sprintf(doom1wad, "%s/doom1.wad", doomwaddir);
 
      // Bug, dear Shawn.
     // Insufficient malloc, caused spurious realloc errors.
@@ -608,9 +609,8 @@ void IdentifyVersion (void)
     doom2fwad = malloc(strlen(doomwaddir)+1+10+1);
     sprintf(doom2fwad, "%s/doom2f.wad", doomwaddir);
 
-    home = getenv("HOME");
-    if (!home)
-      I_Error("Please set $HOME to your home directory");
+    //home = getenv("HOME");
+	home = ".";
     sprintf(basedefault, "%s/.doomrc", home);
 #endif
 
@@ -708,7 +708,7 @@ void IdentifyVersion (void)
       return;
     }
 
-    printf("Game mode indeterminate.\n");
+    LOG("Game mode indeterminate.\n");
     gamemode = indetermined;
 
     // We don't abort. Let's see what the PWAD contains.
@@ -793,14 +793,17 @@ void FindResponseFile (void)
 //
 // D_DoomMain
 //
-void D_DoomMain (void)
+void D_DoomMain (char* wad_path)
 {
     int             p;
     char                    file[256];
 
+	LOG("D_DoomMain STARTED");
+	LOG("%s", wad_path);
+
     FindResponseFile ();
 	
-    IdentifyVersion ();
+    IdentifyVersion (wad_path);
 	
     setbuf (stdout, NULL);
     modifiedgame = false;
@@ -869,14 +872,14 @@ void D_DoomMain (void)
 	break;
     }
     
-    printf ("%s\n",title);
+    LOG ("%s\n",title);
 
     if (devparm)
-	printf(D_DEVSTR);
+	LOG(D_DEVSTR);
     
     if (M_CheckParm("-cdrom"))
     {
-	printf(D_CDROM);
+	LOG(D_CDROM);
 	mkdir("c:\\doomdata",0);
 	strcpy (basedefault,"c:/doomdata/default.cfg");
     }	
@@ -894,7 +897,7 @@ void D_DoomMain (void)
 	    scale = 10;
 	if (scale > 400)
 	    scale = 400;
-	printf ("turbo scale: %i%%\n",scale);
+	LOG ("turbo scale: %i%%\n",scale);
 	forwardmove[0] = forwardmove[0]*scale/100;
 	forwardmove[1] = forwardmove[1]*scale/100;
 	sidemove[0] = sidemove[0]*scale/100;
@@ -919,7 +922,7 @@ void D_DoomMain (void)
 	  case registered:
 	    sprintf (file,"~"DEVMAPS"E%cM%c.wad",
 		     myargv[p+1][0], myargv[p+2][0]);
-	    printf("Warping to Episode %s, Map %s.\n",
+	    LOG("Warping to Episode %s, Map %s.\n",
 		   myargv[p+1],myargv[p+2]);
 	    break;
 	    
@@ -954,7 +957,7 @@ void D_DoomMain (void)
     {
 	sprintf (file,"%s.lmp", myargv[p+1]);
 	D_AddFile (file);
-	printf("Playing demo %s.lmp.\n",myargv[p+1]);
+	LOG("Playing demo %s.lmp.\n",myargv[p+1]);
     }
     
     // get skill / episode / map from parms
@@ -984,15 +987,15 @@ void D_DoomMain (void)
     {
 	int     time;
 	time = atoi(myargv[p+1]);
-	printf("Levels will end after %d minute",time);
+	LOG("Levels will end after %d minute",time);
 	if (time>1)
-	    printf("s");
-	printf(".\n");
+	    LOG("s");
+	LOG(".\n");
     }
 
     p = M_CheckParm ("-avg");
     if (p && p < myargc-1 && deathmatch)
-	printf("Austin Virtual Gaming: Levels will end after 20 minutes\n");
+	LOG("Austin Virtual Gaming: Levels will end after 20 minutes\n");
 
     p = M_CheckParm ("-warp");
     if (p && p < myargc-1)
@@ -1008,16 +1011,16 @@ void D_DoomMain (void)
     }
     
     // init subsystems
-    printf ("V_Init: allocate screens.\n");
+    LOG ("V_Init: allocate screens.\n");
     V_Init ();
 
-    printf ("M_LoadDefaults: Load system defaults.\n");
+    LOG ("M_LoadDefaults: Load system defaults.\n");
     M_LoadDefaults ();              // load before initing other systems
 
-    printf ("Z_Init: Init zone memory allocation daemon. \n");
+    LOG ("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
 
-    printf ("W_Init: Init WADfiles.\n");
+    LOG ("W_Init: Init WADfiles.\n");
     W_InitMultipleFiles (wadfiles);
     
 
@@ -1049,7 +1052,7 @@ void D_DoomMain (void)
     // Iff additonal PWAD files are used, print modified banner
     if (modifiedgame)
     {
-	/*m*/printf (
+	/*m*/LOG (
 	    "===========================================================================\n"
 	    "ATTENTION:  This version of DOOM has been modified.  If you would like to\n"
 	    "get a copy of the original game, call 1-800-IDGAMES or see the readme file.\n"
@@ -1066,7 +1069,7 @@ void D_DoomMain (void)
     {
       case shareware:
       case indetermined:
-	printf (
+	LOG (
 	    "===========================================================================\n"
 	    "                                Shareware!\n"
 	    "===========================================================================\n"
@@ -1075,7 +1078,7 @@ void D_DoomMain (void)
       case registered:
       case retail:
       case commercial:
-	printf (
+	LOG (
 	    "===========================================================================\n"
 	    "                 Commercial product - do not distribute!\n"
 	    "         Please report software piracy to the SPA: 1-800-388-PIR8\n"
@@ -1088,28 +1091,28 @@ void D_DoomMain (void)
 	break;
     }
 
-    printf ("M_Init: Init miscellaneous info.\n");
+    LOG ("M_Init: Init miscellaneous info.\n");
     M_Init ();
 
-    printf ("R_Init: Init DOOM refresh daemon - ");
+    LOG ("R_Init: Init DOOM refresh daemon - ");
     R_Init ();
 
-    printf ("\nP_Init: Init Playloop state.\n");
+    LOG ("\nP_Init: Init Playloop state.\n");
     P_Init ();
 
-    printf ("I_Init: Setting up machine state.\n");
+    LOG ("I_Init: Setting up machine state.\n");
     I_Init ();
 
-    printf ("D_CheckNetGame: Checking network game status.\n");
+    LOG ("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();
 
-    printf ("S_Init: Setting up sound.\n");
+    LOG ("S_Init: Setting up sound.\n");
     S_Init (snd_SfxVolume /* *8 */, snd_MusicVolume /* *8*/ );
 
-    printf ("HU_Init: Setting up heads up display.\n");
+    LOG ("HU_Init: Setting up heads up display.\n");
     HU_Init ();
 
-    printf ("ST_Init: Init status bar.\n");
+    LOG ("ST_Init: Init status bar.\n");
     ST_Init ();
 
     // check for a driver that wants intermission stats
@@ -1120,7 +1123,7 @@ void D_DoomMain (void)
 	extern  void*	statcopy;                            
 
 	statcopy = (void*)atoi(myargv[p+1]);
-	printf ("External statistics registered.\n");
+	LOG ("External statistics registered.\n");
     }
     
     // start the apropriate game based on parms

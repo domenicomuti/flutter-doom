@@ -28,6 +28,7 @@
 #pragma interface
 #endif
 
+#define IPPORT_USERRESERVED 5000
 
 
 // Called by D_DoomMain.

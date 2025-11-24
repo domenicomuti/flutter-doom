@@ -23,7 +23,14 @@
 #ifndef __M_BBOX__
 #define __M_BBOX__
 
-#include <values.h>
+#include <limits.h>
+#ifndef MININT
+#define MININT INT_MIN
+#endif
+
+#ifndef MAXINT
+#define MAXINT INT_MAX
+#endif
 
 #include "m_fixed.h"
 
