@@ -31,6 +31,7 @@ static const char rcsid[] = "$Id: d_main.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 #define	FGCOLOR		8
 
 #include "debug.h"
+#include <pthread.h>
 
 #ifdef NORMALUNIX
 #include <stdio.h>
@@ -361,7 +362,7 @@ void D_DoomLoop (void)
     {
 	char    filename[20];
 	sprintf (filename,"debug%i.txt",consoleplayer);
-	printf ("debug output to: %s\n",filename);
+	LOG ("debug output to: %s\n",filename);
 	debugfile = fopen (filename,"w");
     }
 	
@@ -661,7 +662,7 @@ void IdentifyVersion (char* wad_path)
 	// C'est ridicule!
 	// Let's handle languages in config files, okay?
 	language = french;
-	printf("French version\n");
+	LOG("French version\n");
 	D_AddFile (doom2fwad);
 	return;
     }
@@ -741,10 +742,10 @@ void FindResponseFile (void)
 	    handle = fopen (&myargv[i][1],"rb");
 	    if (!handle)
 	    {
-		printf ("\nNo such response file!");
+		LOG ("\nNo such response file!");
 		exit(1);
 	    }
-	    printf("Found response file %s!\n",&myargv[i][1]);
+	    LOG("Found response file %s!\n",&myargv[i][1]);
 	    fseek (handle,0,SEEK_END);
 	    size = ftell(handle);
 	    fseek (handle,0,SEEK_SET);
@@ -781,29 +782,49 @@ void FindResponseFile (void)
 	    myargc = indexinfile;
 	
 	    // DISPLAY ARGS
-	    printf("%d command-line args:\n",myargc);
+	    LOG("%d command-line args:\n",myargc);
 	    for (k=1;k<myargc;k++)
-		printf("%s\n",myargv[k]);
+		LOG("%s\n",myargv[k]);
 
 	    break;
 	}
 }
 
 
+void FlutterDoomStart(char* wad_path, byte* external_fb) {
+	pthread_t doom_thread;
+
+	ThreadArgs* thread_args = malloc(sizeof(ThreadArgs));
+	if (thread_args == NULL) {
+		LOG("ThreadArgs error");
+		return;
+	}
+	thread_args->wad_path = wad_path;
+	thread_args->external_fb = external_fb;
+
+	LOG("FRAMEBUFFER ADDRES %p", external_fb);
+
+    if (pthread_create(&doom_thread, NULL, &D_DoomMain, thread_args) != 0) {
+        LOG("pthread_create error");
+        return;
+    }
+
+    return;
+}
+
 //
 // D_DoomMain
 //
-void D_DoomMain (char* wad_path)
+void* D_DoomMain (void* args)
 {
     int             p;
     char                    file[256];
 
-	LOG("D_DoomMain STARTED");
-	LOG("%s", wad_path);
+	ThreadArgs* thread_args = (ThreadArgs*)args;
 
     FindResponseFile ();
 	
-    IdentifyVersion (wad_path);
+    IdentifyVersion (thread_args->wad_path);
 	
     setbuf (stdout, NULL);
     modifiedgame = false;
@@ -1013,6 +1034,7 @@ void D_DoomMain (char* wad_path)
     // init subsystems
     LOG ("V_Init: allocate screens.\n");
     V_Init ();
+	screens[0] = thread_args->external_fb;
 
     LOG ("M_LoadDefaults: Load system defaults.\n");
     M_LoadDefaults ();              // load before initing other systems

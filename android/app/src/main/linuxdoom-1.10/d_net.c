@@ -33,6 +33,7 @@ static const char rcsid[] = "$Id: d_net.c,v 1.3 1997/02/03 22:01:47 b1 Exp $";
 #include "g_game.h"
 #include "doomdef.h"
 #include "doomstat.h"
+#include "debug.h"
 
 #define	NCMD_EXIT		0x80000000
 #define	NCMD_RETRANSMIT		0x40000000
@@ -404,7 +405,7 @@ void NetUpdate (void)
 	if (maketic - gameticdiv >= BACKUPTICS/2-1)
 	    break;          // can't hold any more
 	
-	//printf ("mk:%i ",maketic);
+	//LOG ("mk:%i ",maketic);
 	G_BuildTiccmd (&localcmds[maketic%BACKUPTICS]);
 	maketic++;
     }
@@ -484,7 +485,7 @@ void D_ArbitrateNetStart (void)
     if (doomcom->consoleplayer)
     {
 	// listen for setup info from key player
-	printf ("listening for network start info...\n");
+	LOG ("listening for network start info...\n");
 	while (1)
 	{
 	    CheckAbort ();
@@ -507,7 +508,7 @@ void D_ArbitrateNetStart (void)
     else
     {
 	// key player, send the setup info
-	printf ("sending network start info...\n");
+	LOG ("sending network start info...\n");
 	do
 	{
 	    CheckAbort ();
@@ -574,7 +575,7 @@ void D_CheckNetGame (void)
     if (netgame)
 	D_ArbitrateNetStart ();
 
-    printf ("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
+    LOG ("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
 	    startskill, deathmatch, startmap, startepisode);
 	
     // read values out of doomcom
@@ -588,7 +589,7 @@ void D_CheckNetGame (void)
     for (i=0 ; i<doomcom->numnodes ; i++)
 	nodeingame[i] = true;
 	
-    printf ("player %i of %i (%i nodes)\n",
+    LOG ("player %i of %i (%i nodes)\n",
 	    consoleplayer+1, doomcom->numplayers, doomcom->numnodes);
 
 }
@@ -699,14 +700,14 @@ void TryRunTics (void)
 	    if (nettics[0] <= nettics[nodeforplayer[i]])
 	    {
 		gametime--;
-		// printf ("-");
+		// LOG ("-");
 	    }
 	    frameskip[frameon&3] = (oldnettics > nettics[nodeforplayer[i]]);
 	    oldnettics = nettics[0];
 	    if (frameskip[0] && frameskip[1] && frameskip[2] && frameskip[3])
 	    {
 		skiptics = 1;
-		// printf ("+");
+		// LOG ("+");
 	    }
 	}
     }// demoplayback

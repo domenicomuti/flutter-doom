@@ -48,6 +48,7 @@ rcsid[] = "$Id: r_data.c,v 1.4 1997/02/03 16:47:55 b1 Exp $";
 
 
 #include "r_data.h"
+#include "debug.h"
 
 //
 // Graphics.
@@ -351,7 +352,7 @@ void R_GenerateLookup (int texnum)
     {
 	if (!patchcount[x])
 	{
-	    printf ("R_GenerateLookup: column without a patch (%s)\n",
+	    LOG ("R_GenerateLookup: column without a patch (%s)\n",
 		    texture->name);
 	    return;
 	}
@@ -494,18 +495,18 @@ void R_InitTextures (void)
     temp1 = W_GetNumForName ("S_START");  // P_???????
     temp2 = W_GetNumForName ("S_END") - 1;
     temp3 = ((temp2-temp1+63)/64) + ((numtextures+63)/64);
-    printf("[");
+    LOG("[");
     for (i = 0; i < temp3; i++)
-	printf(" ");
-    printf("         ]");
+	LOG(" ");
+    LOG("         ]");
     for (i = 0; i < temp3; i++)
-	printf("\x8");
-    printf("\x8\x8\x8\x8\x8\x8\x8\x8\x8\x8");	
+	LOG("\x8");
+    LOG("\x8\x8\x8\x8\x8\x8\x8\x8\x8\x8");	
 	
     for (i=0 ; i<numtextures ; i++, directory++)
     {
 	if (!(i&63))
-	    printf (".");
+	    LOG (".");
 
 	if (i == numtextures1)
 	{
@@ -617,7 +618,7 @@ void R_InitSpriteLumps (void)
     for (i=0 ; i< numspritelumps ; i++)
     {
 	if (!(i&63))
-	    printf (".");
+	    LOG (".");
 
 	patch = W_CacheLumpNum (firstspritelump+i, PU_CACHE);
 	spritewidth[i] = SHORT(patch->width)<<FRACBITS;
@@ -655,13 +656,13 @@ void R_InitColormaps (void)
 void R_InitData (void)
 {
     R_InitTextures ();
-    printf ("\nInitTextures");
+    LOG ("\nInitTextures");
     R_InitFlats ();
-    printf ("\nInitFlats");
+    LOG ("\nInitFlats");
     R_InitSpriteLumps ();
-    printf ("\nInitSprites");
+    LOG ("\nInitSprites");
     R_InitColormaps ();
-    printf ("\nInitColormaps");
+    LOG ("\nInitColormaps");
 }
 
 

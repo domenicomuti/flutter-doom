@@ -56,6 +56,7 @@ int XShmGetEventBase( Display* dpy ); // problems with g++?
 #include "d_main.h"
 
 #include "doomdef.h"
+#include "debug.h"
 
 #define POINTER_WARP_COUNTDOWN	1
 
@@ -941,7 +942,7 @@ void InitExpand2 (void)
 	unsigned	u[2];
     } pixel;
 	
-    printf ("building exptable2...\n");
+    LOG ("building exptable2...\n");
     exp = exptable2;
     for (i=0 ; i<256 ; i++)
     {
@@ -952,7 +953,7 @@ void InitExpand2 (void)
 	    *exp++ = pixel.d;
 	}
     }
-    printf ("done.\n");
+    LOG ("done.\n");
 }
 
 int	inited;

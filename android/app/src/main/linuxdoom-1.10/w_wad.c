@@ -47,7 +47,7 @@ rcsid[] = "$Id: w_wad.c,v 1.5 1997/02/03 16:47:57 b1 Exp $";
 #pragma implementation "w_wad.h"
 #endif
 #include "w_wad.h"
-
+#include "debug.h"
 
 
 
@@ -162,11 +162,11 @@ void W_AddFile (char *filename)
 		
     if ( (handle = open (filename,O_RDONLY | O_BINARY)) == -1)
     {
-	printf (" couldn't open %s\n",filename);
+	LOG (" couldn't open %s\n",filename);
 	return;
     }
 
-    printf (" adding %s\n",filename);
+    LOG (" adding %s\n",filename);
     startlump = numlumps;
 	
     if (strcmpi (filename+strlen(filename)-3 , "wad" ) )
@@ -486,13 +486,13 @@ W_CacheLumpNum
     {
 	// read the lump in
 	
-	//printf ("cache miss on lump %i\n",lump);
+	//LOG ("cache miss on lump %i\n",lump);
 	ptr = Z_Malloc (W_LumpLength (lump), tag, &lumpcache[lump]);
 	W_ReadLump (lump, lumpcache[lump]);
     }
     else
     {
-	//printf ("cache hit on lump %i\n",lump);
+	//LOG ("cache hit on lump %i\n",lump);
 	Z_ChangeTag (lumpcache[lump],tag);
     }
 	

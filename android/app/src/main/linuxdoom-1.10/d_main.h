@@ -31,14 +31,17 @@
 #pragma interface
 #endif
 
-
-
 #define MAXWADFILES             20
 extern char*		wadfiles[MAXWADFILES];
 
+typedef struct ThreadArgs {
+	char* wad_path;
+	byte* external_fb;
+} ThreadArgs;
+
 void D_AddFile (char *file);
 
-
+void FlutterDoomStart(char* wad_path, byte* external_fb);
 
 //
 // D_DoomMain()
@@ -46,7 +49,7 @@ void D_AddFile (char *file);
 // calls all startup code, parses command line options.
 // If not overrided by user input, calls N_AdvanceDemo.
 //
-void D_DoomMain (char* wad_path);
+void* D_DoomMain (void* args);
 
 // Called by IO functions when input is detected.
 void D_PostEvent (event_t* ev);

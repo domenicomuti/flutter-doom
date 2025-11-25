@@ -39,7 +39,7 @@ static const char rcsid[] = "$Id: r_main.c,v 1.5 1997/02/03 22:45:12 b1 Exp $";
 
 #include "r_local.h"
 #include "r_sky.h"
-
+#include "debug.h"
 
 
 
@@ -773,22 +773,22 @@ extern int	screenblocks;
 void R_Init (void)
 {
     R_InitData ();
-    printf ("\nR_InitData");
+    LOG ("\nR_InitData");
     R_InitPointToAngle ();
-    printf ("\nR_InitPointToAngle");
+    LOG ("\nR_InitPointToAngle");
     R_InitTables ();
     // viewwidth / viewheight / detailLevel are set by the defaults
-    printf ("\nR_InitTables");
+    LOG ("\nR_InitTables");
 
     R_SetViewSize (screenblocks, detailLevel);
     R_InitPlanes ();
-    printf ("\nR_InitPlanes");
+    LOG ("\nR_InitPlanes");
     R_InitLightTables ();
-    printf ("\nR_InitLightTables");
+    LOG ("\nR_InitLightTables");
     R_InitSkyMap ();
-    printf ("\nR_InitSkyMap");
+    LOG ("\nR_InitSkyMap");
     R_InitTranslationTables ();
-    printf ("\nR_InitTranslationsTables");
+    LOG ("\nR_InitTranslationsTables");
 	
     framecount = 0;
 }

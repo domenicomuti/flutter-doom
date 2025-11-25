@@ -5,8 +5,7 @@ import 'dart:ffi';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
-late final DynamicLibrary dylib;
-late final void Function(Pointer<Utf8>) doomMain;
+Pointer<UnsignedChar> framebuffer = malloc<UnsignedChar>(320 * 200);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,17 +37,20 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
-    dylib = DynamicLibrary.open('libdoom.so');
-    doomMain = dylib.lookup<NativeFunction<Void Function(Pointer<Utf8>)>>('D_DoomMain').asFunction();
-    doomMain(widget.wadPath.toNativeUtf8());
+    final dylib = DynamicLibrary.open('libdoom.so');
+    final void Function(Pointer<Utf8>, Pointer<UnsignedChar>) flutterDoomStart = dylib.lookup<NativeFunction<Void Function(Pointer<Utf8>, Pointer<UnsignedChar>)>>('FlutterDoomStart').asFunction();
+    flutterDoomStart(widget.wadPath.toNativeUtf8(), framebuffer);
   }
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Text('Hello World!'),
+          child: ElevatedButton(onPressed: () {
+            print(framebuffer);
+            print(framebuffer[0]);
+          }, child: Text("TEST")),
         ),
       ),
     );

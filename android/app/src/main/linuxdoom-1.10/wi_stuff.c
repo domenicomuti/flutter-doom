@@ -49,6 +49,7 @@ rcsid[] = "$Id: wi_stuff.c,v 1.7 1997/02/03 22:45:13 b1 Exp $";
 #include "v_video.h"
 
 #include "wi_stuff.h"
+#include "debug.h"
 
 //
 // Data needed to add patches to full screen intermission pics.
@@ -494,7 +495,7 @@ WI_drawOnLnode
     else
     {
 	// DEBUG
-	printf("Could not place patch on level %d", n+1); 
+	LOG("Could not place patch on level %d", n+1); 
     }
 }
 
