@@ -40,7 +40,7 @@ rcsid[] = "$Id: r_things.c,v 1.5 1997/02/03 16:47:56 b1 Exp $";
 #include "r_local.h"
 
 #include "doomstat.h"
-
+#include "debug.h"
 
 
 #define MINZ				(FRACUNIT*4)
@@ -221,7 +221,7 @@ void R_InitSpriteDefs (char** namelist)
 		frame = lumpinfo[l].name[4] - 'A';
 		rotation = lumpinfo[l].name[5] - '0';
 
-		if (modifiedgame)
+		if (modifiedgame) 
 		    patched = W_GetNumForName (lumpinfo[l].name);
 		else
 		    patched = l;

@@ -60,6 +60,7 @@ rcsid[] = "$Id: st_stuff.c,v 1.6 1997/02/03 22:45:13 b1 Exp $";
 // Data.
 #include "dstrings.h"
 #include "sounds.h"
+#include "debug.h"
 
 //
 // STATUS BAR DATA
@@ -531,7 +532,7 @@ ST_Responder (event_t* ev)
 	break;
 	
       case AM_MSGEXITED:
-	//	fprintf(stderr, "AM exited\n");
+	//	LOG("AM exited\n");
 	st_gamestate = FirstPersonState;
 	break;
     }

@@ -42,6 +42,7 @@ rcsid[] = "$Id: hu_stuff.c,v 1.4 1997/02/03 16:47:52 b1 Exp $";
 // Data.
 #include "dstrings.h"
 #include "sounds.h"
+#include "debug.h"
 
 //
 // Locally used constants, shortcuts.
@@ -708,7 +709,7 @@ boolean HU_Responder(event_t *ev)
 	    c = c - '0';
 	    if (c > 9)
 		return false;
-	    // fprintf(stderr, "got here\n");
+	    // LOG("got here\n");
 	    macromessage = chat_macros[c];
 	    
 	    // kill last message with a '\n'

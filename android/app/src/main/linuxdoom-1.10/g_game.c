@@ -69,6 +69,7 @@ rcsid[] = "$Id: g_game.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 
 
 #include "g_game.h"
+#include "debug.h"
 
 
 #define SAVEGAMESIZE	0x2c000
@@ -279,12 +280,12 @@ void G_BuildTiccmd (ticcmd_t* cmd)
     { 
 	if (gamekeydown[key_right]) 
 	{
-	    // fprintf(stderr, "strafe right\n");
+	    // LOG("strafe right\n");
 	    side += sidemove[speed]; 
 	}
 	if (gamekeydown[key_left]) 
 	{
-	    //	fprintf(stderr, "strafe left\n");
+	    //	LOG("strafe left\n");
 	    side -= sidemove[speed]; 
 	}
 	if (joyxmove > 0) 
@@ -307,12 +308,12 @@ void G_BuildTiccmd (ticcmd_t* cmd)
  
     if (gamekeydown[key_up]) 
     {
-	// fprintf(stderr, "up\n");
+	// LOG("up\n");
 	forward += forwardmove[speed]; 
     }
     if (gamekeydown[key_down]) 
     {
-	// fprintf(stderr, "down\n");
+	// LOG("down\n");
 	forward -= forwardmove[speed]; 
     }
     if (joyymove < 0) 
@@ -1588,7 +1589,7 @@ void G_DoPlayDemo (void)
     demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 
     if ( *demo_p++ != VERSION)
     {
-      fprintf( stderr, "Demo is from a different game version!\n");
+      LOG("Demo is from a different game version!\n");
       gameaction = ga_nothing;
       return;
     }

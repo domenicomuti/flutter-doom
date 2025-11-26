@@ -46,6 +46,7 @@ static const char rcsid[] = "$Id: am_map.c,v 1.4 1997/02/03 21:24:33 b1 Exp $";
 #include "dstrings.h"
 
 #include "am_map.h"
+#include "debug.h"
 
 
 // For use if I do walls with outsides/insides
@@ -997,7 +998,7 @@ AM_drawFline
 	   || fl->b.x < 0 || fl->b.x >= f_w
 	   || fl->b.y < 0 || fl->b.y >= f_h)
     {
-	fprintf(stderr, "fuck %d \r", fuck++);
+	LOG("fuck %d \r", fuck++);
 	return;
     }
 

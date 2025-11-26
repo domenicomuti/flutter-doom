@@ -42,7 +42,7 @@ rcsid[] = "$Id: s_sound.c,v 1.6 1997/02/03 22:45:12 b1 Exp $";
 #include "p_local.h"
 
 #include "doomstat.h"
-
+#include "debug.h"
 
 // Purpose?
 const char snd_prefixen[]
@@ -164,7 +164,7 @@ void S_Init
 {  
   int		i;
 
-  fprintf( stderr, "S_Init: default sfx volume %d\n", sfxVolume);
+  LOG("S_Init: default sfx volume %d\n", sfxVolume);
 
   // Whatever these did with DMX, these are rather dummies now.
   I_SetChannels();
@@ -423,7 +423,7 @@ S_StartSound
     {
 	for (i=first_saw;i!=next_saw;i=(i+1)%10)
 	    if (last_saw_origins[i] != origin)
-		fprintf(stderr, "old origin 0x%lx != "
+		LOG("old origin 0x%lx != "
 			"origin 0x%lx for sfx %d\n",
 			last_saw_origins[i],
 			origin,
@@ -457,7 +457,7 @@ S_StartSound
 			    channels[i].handle);
 		}
 	    }
-	    fprintf(stderr, "\n");
+	    LOG("\n");
 	}
     }
 }
@@ -718,7 +718,7 @@ void S_StopChannel(int cnum)
 	{
 #ifdef SAWDEBUG
 	    if (c->sfxinfo == &S_sfx[sfx_sawful])
-		fprintf(stderr, "stopped\n");
+		LOG("stopped\n");
 #endif
 	    I_StopSound(c->handle);
 	}

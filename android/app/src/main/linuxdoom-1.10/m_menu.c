@@ -62,6 +62,7 @@ rcsid[] = "$Id: m_menu.c,v 1.7 1997/02/03 22:45:10 b1 Exp $";
 #include "sounds.h"
 
 #include "m_menu.h"
+#include "debug.h"
 
 
 
@@ -1134,7 +1135,7 @@ void M_ChangeDetail(int choice)
     detailLevel = 1 - detailLevel;
 
     // FIXME - does not work. Remove anyway?
-    fprintf( stderr, "M_ChangeDetail: low detail mode n.a.\n");
+    LOG("M_ChangeDetail: low detail mode n.a.\n");
 
     return;
     

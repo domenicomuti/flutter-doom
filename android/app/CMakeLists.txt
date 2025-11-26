@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.22.1)
 project(doom)
 
 set(SOURCES
+	src/main/linuxdoom-1.10/dart/dart_api_dl.c
+	src/main/linuxdoom-1.10/dart_interface.c
     src/main/linuxdoom-1.10/doomdef.c
 	src/main/linuxdoom-1.10/doomstat.c
 	src/main/linuxdoom-1.10/dstrings.c

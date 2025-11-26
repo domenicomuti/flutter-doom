@@ -58,6 +58,7 @@ rcsid[] = "$Id: i_unix.c,v 1.5 1997/02/03 22:45:10 b1 Exp $";
 #include "w_wad.h"
 
 #include "doomdef.h"
+#include "debug.h"
 
 // UNIX hack, to be removed.
 #ifdef SNDSERV
@@ -168,8 +169,8 @@ myioctl
     rc = ioctl(fd, command, arg);  
     if (rc < 0)
     {
-	fprintf(stderr, "ioctl(dsp,%d,arg) failed\n", command);
-	fprintf(stderr, "errno=%d\n", errno);
+	LOG("ioctl(dsp,%d,arg) failed\n", command);
+	LOG("errno=%d\n", errno);
 	exit(-1);
     }
 }
@@ -212,14 +213,14 @@ getsfx
     //  default sound for replacement.
     if ( W_CheckNumForName(name) == -1 )
       sfxlump = W_GetNumForName("dspistol");
-    else
+    else 
       sfxlump = W_GetNumForName(name);
-    
+
     size = W_LumpLength( sfxlump );
 
     // Debug.
-    // fprintf( stderr, "." );
-    //fprintf( stderr, " -loading  %s (lump %d, %d bytes)\n",
+    // LOG("." );
+    //LOG(" -loading  %s (lump %d, %d bytes)\n",
     //	     sfxname, sfxlump, size );
     //fflush( stderr );
     
@@ -489,12 +490,12 @@ I_StartSound
     return id;
 #else
     // Debug.
-    //fprintf( stderr, "starting sound %d", id );
+    //LOG("starting sound %d", id );
     
     // Returns a handle (not used).
     id = addsfx( id, vol, steptable[pitch], sep );
 
-    // fprintf( stderr, "/handle is %d\n", id );
+    // LOG("/handle is %d\n", id );
     
     return id;
 #endif
@@ -644,7 +645,7 @@ void I_UpdateSound( void )
     
     if ( misses > 10 )
     {
-      fprintf( stderr, "I_SoundUpdate: missed 10 buffer writes\n");
+      LOG("I_SoundUpdate: missed 10 buffer writes\n");
       misses = 0;
     }
     
@@ -706,7 +707,7 @@ void I_ShutdownSound(void)
   
 
   // FIXME (below).
-  fprintf( stderr, "I_ShutdownSound: NOT finishing pending sounds\n");
+  LOG("I_ShutdownSound: NOT finishing pending sounds\n");
   fflush( stderr );
   
   while ( !done )
@@ -754,22 +755,22 @@ I_InitSound()
     sndserver = popen(buffer, "w");
   }
   else
-    fprintf(stderr, "Could not start sound server [%s]\n", buffer);
+    LOG("Could not start sound server [%s]\n", buffer);
 #else
     
   int i;
   
 #ifdef SNDINTR
-  fprintf( stderr, "I_SoundSetTimer: %d microsecs\n", SOUND_INTERVAL );
+  LOG("I_SoundSetTimer: %d microsecs\n", SOUND_INTERVAL );
   I_SoundSetTimer( SOUND_INTERVAL );
 #endif
     
   // Secure and configure sound device first.
-  fprintf( stderr, "I_InitSound: ");
+  LOG("I_InitSound: ");
   
   audio_fd = open("/dev/dsp", O_WRONLY);
   if (audio_fd<0)
-    fprintf(stderr, "Could not open /dev/dsp\n");
+    LOG("Could not open /dev/dsp\n");
   
                      
   i = 11 | (2<<16);                                           
@@ -788,13 +789,13 @@ I_InitSound()
   if (i&=AFMT_S16_LE)    
     myioctl(audio_fd, SNDCTL_DSP_SETFMT, &i);
   else
-    fprintf(stderr, "Could not play signed 16 data\n");
+    LOG("Could not play signed 16 data\n");
 
-  fprintf(stderr, " configured audio device\n" );
+  LOG(" configured audio device\n" );
 
     
   // Initialize external data (all sounds) at start, keep static.
-  fprintf( stderr, "I_InitSound: ");
+  LOG("I_InitSound: ");
   
   for (i=1 ; i<NUMSFX ; i++)
   { 
@@ -812,14 +813,14 @@ I_InitSound()
     }
   }
 
-  fprintf( stderr, " pre-cached all sound data\n");
+  LOG(" pre-cached all sound data\n");
   
   // Now initialize mixbuffer with zero.
   for ( i = 0; i< MIXBUFFERSIZE; i++ )
     mixbuffer[i] = 0;
   
   // Finished initialization.
-  fprintf(stderr, "I_InitSound: sound module ready\n");
+  LOG("I_InitSound: sound module ready\n");
     
 #endif
 }
@@ -917,7 +918,7 @@ static int sig = SIGALRM;
 void I_HandleSoundTimer( int ignore )
 {
   // Debug.
-  //fprintf( stderr, "%c", '+' ); fflush( stderr );
+  //LOG("%c", '+' ); fflush( stderr );
   
   // Feed sound device if necesary.
   if ( flag )
@@ -970,7 +971,7 @@ int I_SoundSetTimer( int duration_of_tick )
 
   // Debug.
   if ( res == -1 )
-    fprintf( stderr, "I_SoundSetTimer: interrupt n.a.\n");
+    LOG("I_SoundSetTimer: interrupt n.a.\n");
   
   return res;
 }
@@ -981,5 +982,5 @@ void I_SoundDelTimer()
 {
   // Debug.
   if ( I_SoundSetTimer( 0 ) == -1)
-    fprintf( stderr, "I_SoundDelTimer: failed to remove interrupt. Doh!\n");
+    LOG("I_SoundDelTimer: failed to remove interrupt. Doh!\n");
 }
