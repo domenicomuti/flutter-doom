@@ -129,6 +129,7 @@ class _DoomState extends State<Doom> {
 
   late final Pointer<UnsignedChar> framebuffer;
   late final Uint32List framebuffer32;
+  late final Pointer<Uint32> palette;
 
   final receivePort = ReceivePort();
   late final int nativePort;
@@ -140,6 +141,8 @@ class _DoomState extends State<Doom> {
     framebuffer = malloc<UnsignedChar>(framebufferSize);
     framebuffer32 = Uint32List(framebufferSize);
 
+    palette = malloc<Uint32>(256);
+
     final int Function(Pointer<Void>) dartInitializeApiDL = dylib.lookup<NativeFunction<IntPtr Function(Pointer<Void>)>>('Dart_InitializeApiDL').asFunction();
     dartInitializeApiDL(NativeApi.initializeApiDLData);
     
@@ -149,9 +152,9 @@ class _DoomState extends State<Doom> {
 
     receivePort.listen((dynamic message) async {
       // Invoked at new frame ready
-
       for (int i=0; i<framebufferSize; i++) {
-        framebuffer32[i] = 0xFF000000 | (framebuffer[i] << 16) | (framebuffer[i] << 8) | (framebuffer[i]);
+        //framebuffer32[i] = 0xFF000000 | (framebuffer[i] << 16) | (framebuffer[i] << 8) | (framebuffer[i]);
+        framebuffer32[i] = palette[framebuffer[i]];
       }
 
       var immutableBuffer = await ImmutableBuffer.fromUint8List(framebuffer32.buffer.asUint8List());
@@ -170,8 +173,8 @@ class _DoomState extends State<Doom> {
       setState(() {});
     });
 
-    final void Function(Pointer<Utf8>, Pointer<UnsignedChar>) flutterDoomStart = dylib.lookup<NativeFunction<Void Function(Pointer<Utf8>, Pointer<UnsignedChar>)>>('FlutterDoomStart').asFunction();
-    flutterDoomStart(widget.wadPath.toNativeUtf8(), framebuffer);
+    final void Function(Pointer<Utf8>, Pointer<UnsignedChar>, Pointer<Uint32>) flutterDoomStart = dylib.lookup<NativeFunction<Void Function(Pointer<Utf8>, Pointer<UnsignedChar>, Pointer<Uint32>)>>('FlutterDoomStart').asFunction();
+    flutterDoomStart(widget.wadPath.toNativeUtf8(), framebuffer, palette);
   }
 
   @override

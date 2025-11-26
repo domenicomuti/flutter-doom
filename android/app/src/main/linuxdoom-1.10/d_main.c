@@ -26,6 +26,7 @@
 
 
 #include "d_event.h"
+#include <stdint.h>
 static const char rcsid[] = "$Id: d_main.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 
 #define	BGCOLOR		7
@@ -129,6 +130,9 @@ boolean		advancedemo;
 char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
 char		basedefault[1024];      // default file
+
+
+uint32_t* external_palette;
 
 
 void D_CheckNetGame (void);
@@ -782,7 +786,9 @@ void FindResponseFile (void)
 }
 
 
-void FlutterDoomStart(char* wad_path, byte* external_fb) {
+void FlutterDoomStart(char* wad_path, byte* external_fb, uint32_t* _external_palette) {
+	external_palette = _external_palette;
+
 	pthread_t doom_thread;
 
 	ThreadArgs* thread_args = malloc(sizeof(ThreadArgs));

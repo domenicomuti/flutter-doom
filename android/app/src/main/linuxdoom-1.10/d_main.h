@@ -26,6 +26,7 @@
 #define __D_MAIN__
 
 #include "d_event.h"
+#include <stdint.h>
 
 #ifdef __GNUG__
 #pragma interface
@@ -41,7 +42,7 @@ typedef struct ThreadArgs {
 
 void D_AddFile (char *file);
 
-void FlutterDoomStart(char* wad_path, byte* external_fb);
+void FlutterDoomStart(char* wad_path, byte* external_fb, uint32_t* external_palette);
 
 typedef enum {dart_up, dart_down, dart_left, dart_right, dart_enter, dart_fire, dart_space} dart_keys;
 void DartPostInput(dart_keys dart_key, int dart_pressed_down);
