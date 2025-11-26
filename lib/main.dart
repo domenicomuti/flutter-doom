@@ -10,6 +10,10 @@ import 'package:path_provider/path_provider.dart';
 
 
 ui.Image? frame;
+final DynamicLibrary dylib = DynamicLibrary.open('libdoom.so');
+final void Function(int, int) dartPostInput = dylib.lookup<NativeFunction<Void Function(Int32, Int32)>>('DartPostInput').asFunction();
+enum DartKeys {dartUp, dartDown, dartLeft, dartRight, dartEnter, dartFire, dartSpace}
+
 
 
 void main() async {
@@ -38,9 +42,73 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Doom(wadPath: wadPath)
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Doom(wadPath: wadPath),
+
+              Column(children: [
+                Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                  Column(children: [
+                    Listener(
+                      onPointerDown: (event) =>dartPostInput(DartKeys.dartUp.index, 1),
+                      onPointerUp: (event) =>dartPostInput(DartKeys.dartUp.index, 0),
+                      child: makeButton('UP')
+                    ),
+                    Row(children: [
+                      Listener(
+                        onPointerDown: (event) =>dartPostInput(DartKeys.dartLeft.index, 1),
+                        onPointerUp: (event) =>dartPostInput(DartKeys.dartLeft.index, 0),
+                        child: makeButton('LEFT')
+                      ),
+                      SizedBox(width: 20),
+                      Listener(
+                        onPointerDown: (event) =>dartPostInput(DartKeys.dartRight.index, 1),
+                        onPointerUp: (event) =>dartPostInput(DartKeys.dartRight.index, 0),
+                        child: makeButton('RIGHT')
+                      ),
+                    ]),
+                    Listener(
+                      onPointerDown: (event) =>dartPostInput(DartKeys.dartDown.index, 1),
+                      onPointerUp: (event) =>dartPostInput(DartKeys.dartDown.index, 0),
+                      child: makeButton('DOWN')
+                    )
+                  ]),
+
+                  Listener(
+                    onPointerDown: (event) =>dartPostInput(DartKeys.dartEnter.index, 1),
+                    onPointerUp: (event) =>dartPostInput(DartKeys.dartEnter.index, 0),
+                    child: makeButton('ENTER')
+                  ),
+                  Listener(
+                    onPointerDown: (event) =>dartPostInput(DartKeys.dartFire.index, 1),
+                    onPointerUp: (event) =>dartPostInput(DartKeys.dartFire.index, 0),
+                    child: makeButton('FIRE')
+                  ),
+                ])
+              ]),
+
+              Listener(
+                onPointerDown: (event) =>dartPostInput(DartKeys.dartSpace.index, 1),
+                onPointerUp: (event) =>dartPostInput(DartKeys.dartSpace.index, 0),
+                child: makeButton('SPACE')
+              )
+            ]
+          )
         )
       )
+    );
+  }
+
+  Widget makeButton(String label) {
+    return Container(
+      width: 80,
+      height: 80,
+      decoration: BoxDecoration(
+        color: Colors.blueGrey,
+        border: Border.all()
+      ),
+      child: Text(label),
     );
   }
 }
@@ -59,7 +127,7 @@ class Doom extends StatefulWidget {
 class _DoomState extends State<Doom> {
   final int framebufferSize = 64000; // 320 * 200
 
-  late final Pointer<Uint8> framebuffer;
+  late final Pointer<UnsignedChar> framebuffer;
   late final Uint32List framebuffer32;
 
   final receivePort = ReceivePort();
@@ -69,16 +137,13 @@ class _DoomState extends State<Doom> {
   void initState() {
     super.initState();
 
-    framebuffer = malloc<Uint8>(framebufferSize);
+    framebuffer = malloc<UnsignedChar>(framebufferSize);
     framebuffer32 = Uint32List(framebufferSize);
-
-    nativePort = receivePort.sendPort.nativePort;
-
-    final dylib = DynamicLibrary.open('libdoom.so');
 
     final int Function(Pointer<Void>) dartInitializeApiDL = dylib.lookup<NativeFunction<IntPtr Function(Pointer<Void>)>>('Dart_InitializeApiDL').asFunction();
     dartInitializeApiDL(NativeApi.initializeApiDLData);
     
+    nativePort = receivePort.sendPort.nativePort;
     final void Function(int) registerDartPort = dylib.lookup<NativeFunction<Void Function(Int64)>>('registerDartPort').asFunction();
     registerDartPort(nativePort);
 
@@ -105,7 +170,7 @@ class _DoomState extends State<Doom> {
       setState(() {});
     });
 
-    final void Function(Pointer<Utf8>, Pointer<Uint8>) flutterDoomStart = dylib.lookup<NativeFunction<Void Function(Pointer<Utf8>, Pointer<Uint8>)>>('FlutterDoomStart').asFunction();
+    final void Function(Pointer<Utf8>, Pointer<UnsignedChar>) flutterDoomStart = dylib.lookup<NativeFunction<Void Function(Pointer<Utf8>, Pointer<UnsignedChar>)>>('FlutterDoomStart').asFunction();
     flutterDoomStart(widget.wadPath.toNativeUtf8(), framebuffer);
   }
 

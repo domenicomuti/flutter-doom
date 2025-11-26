@@ -34,6 +34,7 @@ static const char rcsid[] = "$Id: f_wipe.c,v 1.2 1997/02/03 22:45:09 b1 Exp $";
 #include "doomdef.h"
 
 #include "f_wipe.h"
+#include "debug.h"
 
 //
 //                       SCREEN WIPE PACKAGE

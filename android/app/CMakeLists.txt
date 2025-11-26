@@ -72,9 +72,16 @@ add_library(doom SHARED ${SOURCES})
 
 target_compile_options(doom PRIVATE
     -g -Wall -DNORMALUNIX -DLINUX
-	#-Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
-	#-Wno-unused-const-variable
-	#-Wno-unused-variable
+
+	-Wno-uninitialized
+	-Wno-unsequenced
+	-Wno-unused-result
+	-Wno-pointer-to-int-cast
+	-Wno-int-to-pointer-cast
+	-Wno-unused-const-variable
+	-Wno-unused-variable
+	-Wno-unused-but-set-variable
+	-Wno-macro-redefined
 )
 
 target_link_libraries(doom PRIVATE

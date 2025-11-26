@@ -25,6 +25,7 @@
 //-----------------------------------------------------------------------------
 
 
+#include "d_event.h"
 static const char rcsid[] = "$Id: d_main.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 
 #define	BGCOLOR		7
@@ -146,6 +147,35 @@ event_t         events[MAXEVENTS];
 int             eventhead;
 int 		eventtail;
 
+void DartPostInput(dart_keys dart_key, int dart_pressed_down) {
+	event_t new_event;
+	
+	new_event.type = dart_pressed_down ? ev_keydown : ev_keyup;
+
+	if (dart_key == dart_up) {
+		new_event.data1 = KEY_UPARROW;
+	}
+	else if (dart_key == dart_down) {
+		new_event.data1 = KEY_DOWNARROW;
+	}
+	else if (dart_key == dart_left) {
+		new_event.data1 = KEY_LEFTARROW;
+	}
+	else if (dart_key == dart_right) {
+		new_event.data1 = KEY_RIGHTARROW;
+	}
+	else if (dart_key == dart_enter) {
+		new_event.data1 = KEY_ENTER;
+	}
+	else if (dart_key == dart_fire) {
+		new_event.data1 = KEY_RCTRL;
+	}
+	else if (dart_key == dart_space) {
+		new_event.data1 = 0x20;
+	}
+
+	D_PostEvent(&new_event);
+}
 
 //
 // D_PostEvent
@@ -207,7 +237,7 @@ void D_Display (void)
     int				wipestart;
     int				y;
     boolean			done;
-    boolean			wipe;
+    boolean			wipe = false;
     boolean			redrawsbar;
 
     if (nodrawers)
@@ -224,13 +254,13 @@ void D_Display (void)
     }
 
     // save the current screen if about to wipe
-    if (gamestate != wipegamestate)
+    /*if (gamestate != wipegamestate)
     {
 	wipe = true;
 	wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
     }
     else
-	wipe = false;
+	wipe = false;*/
 
     if (gamestate == GS_LEVEL && gametic)
 	HU_Erase();
@@ -328,7 +358,7 @@ void D_Display (void)
     }
     
     // wipe update
-    wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
+    /*wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
 
     wipestart = I_GetTime () - 1;
 
@@ -345,7 +375,7 @@ void D_Display (void)
 	I_UpdateNoBlit ();
 	M_Drawer ();                            // menu is drawn even on top of wipes
 	I_FinishUpdate ();                      // page flip or blit buffer
-    } while (!done);
+    } while (!done);*/
 }
 
 
@@ -508,8 +538,8 @@ void D_AdvanceDemo (void)
 
 	    if ( gamemode == retail )
 	      pagename = "CREDIT";
-	    else
-	      pagename = "HELP2";
+	    //else
+	      //pagename = "HELP2";
 	}
 	break;
       case 5:
@@ -567,9 +597,8 @@ void D_AddFile (char *file)
 //
 void IdentifyVersion (char* wad_path)
 {
-
-    char*	doom1wad;
-    char*	doomwad = wad_path;
+    char*	doom1wad = wad_path;
+    char*	doomwad;
     char*	doomuwad;
     char*	doom2wad;
 
