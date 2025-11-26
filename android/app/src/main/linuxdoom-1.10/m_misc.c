@@ -266,7 +266,7 @@ default_t	defaults[] =
     {"mousetype", (int*)&mousetype, 0},
 #endif
 
-    {"use_mouse",&usemouse, 1},
+    {"use_mouse",&usemouse, 0},
     {"mouseb_fire",&mousebfire,0},
     {"mouseb_strafe",&mousebstrafe,1},
     {"mouseb_forward",&mousebforward,2},
@@ -277,7 +277,7 @@ default_t	defaults[] =
     {"joyb_use",&joybuse,3},
     {"joyb_speed",&joybspeed,2},
 
-    {"screenblocks",&screenblocks, 9},
+    {"screenblocks",&screenblocks, 10},
     {"detaillevel",&detailLevel, 0},
 
     {"snd_channels",&numChannels, 3},

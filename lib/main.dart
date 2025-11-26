@@ -12,7 +12,7 @@ import 'package:path_provider/path_provider.dart';
 ui.Image? frame;
 final DynamicLibrary dylib = DynamicLibrary.open('libdoom.so');
 final void Function(int, int) dartPostInput = dylib.lookup<NativeFunction<Void Function(Int32, Int32)>>('DartPostInput').asFunction();
-enum DartKeys {dartUp, dartDown, dartLeft, dartRight, dartEnter, dartFire, dartSpace}
+enum DartKeys {dartUp, dartDown, dartLeft, dartRight, dartEnter, dartFire, dartSpace, dartEscape, dartTab}
 
 
 
@@ -41,57 +41,91 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Center(
+        body: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Doom(wadPath: wadPath),
 
-              Column(children: [
-                Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                  Column(children: [
-                    Listener(
-                      onPointerDown: (event) =>dartPostInput(DartKeys.dartUp.index, 1),
-                      onPointerUp: (event) =>dartPostInput(DartKeys.dartUp.index, 0),
-                      child: makeButton('UP')
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(children: [
+                          Listener(
+                            onPointerDown: (event) => dartPostInput(DartKeys.dartUp.index, 1),
+                            onPointerUp: (event) => dartPostInput(DartKeys.dartUp.index, 0),
+                            child: makeButton('UP')
+                          ),
+                          SizedBox(height: 10.0),
+                          Row(children: [
+                            Listener(
+                              onPointerDown: (event) => dartPostInput(DartKeys.dartLeft.index, 1),
+                              onPointerUp: (event) => dartPostInput(DartKeys.dartLeft.index, 0),
+                              child: makeButton('LEFT')
+                            ),
+                            SizedBox(width: 20),
+                            Listener(
+                              onPointerDown: (event) => dartPostInput(DartKeys.dartRight.index, 1),
+                              onPointerUp: (event) => dartPostInput(DartKeys.dartRight.index, 0),
+                              child: makeButton('RIGHT')
+                            ),
+                          ]),
+                          SizedBox(height: 10.0),
+                          Listener(
+                            onPointerDown: (event) => dartPostInput(DartKeys.dartDown.index, 1),
+                            onPointerUp: (event) => dartPostInput(DartKeys.dartDown.index, 0),
+                            child: makeButton('DOWN')
+                          )
+                        ]),
+
+                        Column(children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Listener(
+                                onPointerDown: (event) => dartPostInput(DartKeys.dartEscape.index, 1),
+                                onPointerUp: (event) => dartPostInput(DartKeys.dartEscape.index, 0),
+                                child: makeButton('ESC')
+                              ),
+                              SizedBox(width: 20.0),
+                              Listener(
+                                onPointerDown: (event) => dartPostInput(DartKeys.dartEnter.index, 1),
+                                onPointerUp: (event) => dartPostInput(DartKeys.dartEnter.index, 0),
+                                child: makeButton('ENTER')
+                              )
+                            ]
+                          ),
+                          SizedBox(height: 20.0),
+                          Row(children: [
+                            Listener(
+                              onPointerDown: (event) => dartPostInput(DartKeys.dartFire.index, 1),
+                              onPointerUp: (event) => dartPostInput(DartKeys.dartFire.index, 0),
+                              child: makeButton('CTRL')
+                            ),
+                          ])
+                        ])
+                      ]
                     ),
+                    SizedBox(height: 20.0),
                     Row(children: [
-                      Listener(
-                        onPointerDown: (event) =>dartPostInput(DartKeys.dartLeft.index, 1),
-                        onPointerUp: (event) =>dartPostInput(DartKeys.dartLeft.index, 0),
-                        child: makeButton('LEFT')
-                      ),
-                      SizedBox(width: 20),
-                      Listener(
-                        onPointerDown: (event) =>dartPostInput(DartKeys.dartRight.index, 1),
-                        onPointerUp: (event) =>dartPostInput(DartKeys.dartRight.index, 0),
-                        child: makeButton('RIGHT')
-                      ),
-                    ]),
-                    Listener(
-                      onPointerDown: (event) =>dartPostInput(DartKeys.dartDown.index, 1),
-                      onPointerUp: (event) =>dartPostInput(DartKeys.dartDown.index, 0),
-                      child: makeButton('DOWN')
-                    )
-                  ]),
-
-                  Listener(
-                    onPointerDown: (event) =>dartPostInput(DartKeys.dartEnter.index, 1),
-                    onPointerUp: (event) =>dartPostInput(DartKeys.dartEnter.index, 0),
-                    child: makeButton('ENTER')
-                  ),
-                  Listener(
-                    onPointerDown: (event) =>dartPostInput(DartKeys.dartFire.index, 1),
-                    onPointerUp: (event) =>dartPostInput(DartKeys.dartFire.index, 0),
-                    child: makeButton('FIRE')
-                  ),
-                ])
-              ]),
-
-              Listener(
-                onPointerDown: (event) =>dartPostInput(DartKeys.dartSpace.index, 1),
-                onPointerUp: (event) =>dartPostInput(DartKeys.dartSpace.index, 0),
-                child: makeButton('SPACE')
+                      Expanded(child: Listener(
+                        onPointerDown: (event) => dartPostInput(DartKeys.dartTab.index, 1),
+                        onPointerUp: (event) => dartPostInput(DartKeys.dartTab.index, 0),
+                        child: makeButton('TAB')
+                      )),
+                      SizedBox(width: 20.0),
+                      Expanded(child: Listener(
+                        onPointerDown: (event) => dartPostInput(DartKeys.dartSpace.index, 1),
+                        onPointerUp: (event) => dartPostInput(DartKeys.dartSpace.index, 0),
+                        child: makeButton('SPACE')
+                      ))
+                    ])
+                  ]
+                )
               )
             ]
           )
@@ -102,13 +136,14 @@ class MainApp extends StatelessWidget {
 
   Widget makeButton(String label) {
     return Container(
-      width: 80,
-      height: 80,
+      width: 60,
+      height: 60,
       decoration: BoxDecoration(
-        color: Colors.blueGrey,
-        border: Border.all()
+        borderRadius: BorderRadius.circular(5.0),
+        color: const ui.Color.fromARGB(255, 207, 207, 207),
+        border: Border.all(color: const ui.Color.fromARGB(255, 151, 151, 151))
       ),
-      child: Text(label),
+      child: Padding(padding: EdgeInsets.only(left: 3.0, top: 3.0), child: Text(label)),
     );
   }
 }
@@ -153,7 +188,6 @@ class _DoomState extends State<Doom> {
     receivePort.listen((dynamic message) async {
       // Invoked at new frame ready
       for (int i=0; i<framebufferSize; i++) {
-        //framebuffer32[i] = 0xFF000000 | (framebuffer[i] << 16) | (framebuffer[i] << 8) | (framebuffer[i]);
         framebuffer32[i] = palette[framebuffer[i]];
       }
 
@@ -198,12 +232,7 @@ class FramebufferPainter extends CustomPainter {
   void paint(ui.Canvas canvas, ui.Size size) {
     final Rect src = Rect.fromLTWH(0, 0, frame!.width.toDouble(), frame!.height.toDouble());
     
-    canvas.drawImageRect(
-      frame!,
-      src,
-      src,
-      Paint()
-    );
+    canvas.drawImageRect(frame!, src, src, Paint());
   }
   
   @override

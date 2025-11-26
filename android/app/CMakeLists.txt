@@ -73,6 +73,8 @@ add_library(doom SHARED ${SOURCES})
 target_compile_options(doom PRIVATE
     -g -Wall -DNORMALUNIX -DLINUX
 
+	-std=c17
+
 	-Wno-uninitialized
 	-Wno-unsequenced
 	-Wno-unused-result

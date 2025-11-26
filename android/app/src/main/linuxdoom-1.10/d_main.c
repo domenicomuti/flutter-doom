@@ -177,6 +177,12 @@ void DartPostInput(dart_keys dart_key, int dart_pressed_down) {
 	else if (dart_key == dart_space) {
 		new_event.data1 = 0x20;
 	}
+	else if (dart_key == dart_escape) {
+		new_event.data1 = KEY_ESCAPE;
+	}
+	else if (dart_key == dart_tab) {
+		new_event.data1 = KEY_TAB;
+	}
 
 	D_PostEvent(&new_event);
 }
@@ -601,8 +607,8 @@ void D_AddFile (char *file)
 //
 void IdentifyVersion (char* wad_path)
 {
-    char*	doom1wad = wad_path;
-    char*	doomwad;
+    char*	doom1wad;
+    char*	doomwad = wad_path;
     char*	doomuwad;
     char*	doom2wad;
 
