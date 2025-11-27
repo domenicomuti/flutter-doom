@@ -217,22 +217,29 @@ class _DoomState extends State<Doom> {
       return Text("Doom is starting...");
     }
     else {
+      var destWidth = MediaQuery.of(context).size.width;
+      var destHeight = destWidth / 1.6;
+
       return CustomPaint(
-        painter: FramebufferPainter(),
-        size: const ui.Size(320, 200)
+        painter: FramebufferPainter(width: destWidth, height: destHeight),
+        size: ui.Size(destWidth, destHeight)
       );
     }
   }
 }
 
-class FramebufferPainter extends CustomPainter {  
-  FramebufferPainter();
+class FramebufferPainter extends CustomPainter {
+  double width;
+  double height;
+
+  FramebufferPainter({required this.width, required this.height});
 
   @override
   void paint(ui.Canvas canvas, ui.Size size) {
     final Rect src = Rect.fromLTWH(0, 0, frame!.width.toDouble(), frame!.height.toDouble());
+    final Rect dst = Rect.fromLTWH(0, 0, width, height);
     
-    canvas.drawImageRect(frame!, src, src, Paint());
+    canvas.drawImageRect(frame!, src, dst, Paint());
   }
   
   @override
