@@ -1,0 +1,71 @@
+// Emacs style mode select   -*- C++ -*- 
+//-----------------------------------------------------------------------------
+//
+// $Id:$
+//
+// Copyright (C) 1993-1996 by id Software, Inc.
+//
+// This source is available for distribution and/or modification
+// only under the terms of the DOOM Source Code License as
+// published by id Software. All rights reserved.
+//
+// The source is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// FITNESS FOR A PARTICULAR PURPOSE. See the DOOM Source Code License
+// for more details.
+//
+// $Log:$
+//
+// DESCRIPTION:
+//	System specific interface stuff.
+//
+//-----------------------------------------------------------------------------
+
+
+#ifndef __D_MAIN__
+#define __D_MAIN__
+
+#include "d_event.h"
+#include <stdint.h>
+
+#ifdef __GNUG__
+#pragma interface
+#endif
+
+#define MAXWADFILES             20
+extern char*		wadfiles[MAXWADFILES];
+
+typedef struct ThreadArgs {
+	char* wad_path;
+	byte* external_fb;
+} ThreadArgs;
+
+void D_AddFile (char *file);
+
+void FlutterDoomStart(char* wad_path, byte* external_fb, uint32_t* external_palette);
+
+typedef enum {dart_up, dart_down, dart_left, dart_right, dart_enter, dart_fire, dart_space, dart_escape, dart_tab} dart_keys;
+void DartPostInput(dart_keys dart_key, int dart_pressed_down);
+
+//
+// D_DoomMain()
+// Not a globally visible function, just included for source reference,
+// calls all startup code, parses command line options.
+// If not overrided by user input, calls N_AdvanceDemo.
+//
+void* D_DoomMain (void* args);
+
+// Called by IO functions when input is detected.
+void D_PostEvent (event_t* ev);
+
+	
+
+//
+// BASE LEVEL
+//
+void D_PageTicker (void);
+void D_PageDrawer (void);
+void D_AdvanceDemo (void);
+void D_StartTitle (void);
+
+#endif
