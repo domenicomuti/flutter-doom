@@ -65,6 +65,7 @@ rcsid[] = "$Id: m_menu.c,v 1.7 1997/02/03 22:45:10 b1 Exp $";
 #include "debug.h"
 
 
+extern u_char       save_path[1000];
 
 extern patch_t*		hu_font[HU_FONTSIZE];
 extern boolean		message_dontfuckwithme;
@@ -521,7 +522,7 @@ void M_ReadSaveStrings(void)
 	if (M_CheckParm("-cdrom"))
 	    sprintf(name,"c:\\doomdata\\"SAVEGAMENAME"%d.dsg",i);
 	else
-	    sprintf(name,SAVEGAMENAME"%d.dsg",i);
+        sprintf(name,"%s/"SAVEGAMENAME"%d.dsg", save_path, i);
 
 	handle = open (name, O_RDONLY | 0, 0666);
 	if (handle == -1)
@@ -584,7 +585,7 @@ void M_LoadSelect(int choice)
     if (M_CheckParm("-cdrom"))
 	sprintf(name,"c:\\doomdata\\"SAVEGAMENAME"%d.dsg",choice);
     else
-	sprintf(name,SAVEGAMENAME"%d.dsg",choice);
+    sprintf(name,"%s/"SAVEGAMENAME"%d.dsg", save_path, choice);
     G_LoadGame (name);
     M_ClearMenus ();
 }

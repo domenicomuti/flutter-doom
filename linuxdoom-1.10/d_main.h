@@ -44,8 +44,7 @@ void D_AddFile (char *file);
 
 void FlutterDoomStart(char* wad_path, byte* external_fb, uint32_t* external_palette);
 
-typedef enum {dart_up, dart_down, dart_left, dart_right, dart_enter, dart_fire, dart_space, dart_escape, dart_tab} dart_keys;
-void DartPostInput(dart_keys dart_key, int dart_pressed_down);
+void DartPostInput(int dart_key, int dart_pressed_down);
 
 //
 // D_DoomMain()

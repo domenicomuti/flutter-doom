@@ -80,7 +80,6 @@ static const char rcsid[] = "$Id: d_main.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 
 
 #include "d_main.h"
-#include "dart_interface.h"
 #include "debug.h"
 
 //
@@ -94,6 +93,7 @@ static const char rcsid[] = "$Id: d_main.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 //
 void D_DoomLoop (void);
 
+char		save_path[1000];
 
 char*		wadfiles[MAXWADFILES];
 
@@ -151,39 +151,10 @@ event_t         events[MAXEVENTS];
 int             eventhead;
 int 		eventtail;
 
-void DartPostInput(dart_keys dart_key, int dart_pressed_down) {
+void DartPostInput(int dart_key, int dart_pressed_down) {
 	event_t new_event;
-	
+	new_event.data1 = dart_key;
 	new_event.type = dart_pressed_down ? ev_keydown : ev_keyup;
-
-	if (dart_key == dart_up) {
-		new_event.data1 = KEY_UPARROW;
-	}
-	else if (dart_key == dart_down) {
-		new_event.data1 = KEY_DOWNARROW;
-	}
-	else if (dart_key == dart_left) {
-		new_event.data1 = KEY_LEFTARROW;
-	}
-	else if (dart_key == dart_right) {
-		new_event.data1 = KEY_RIGHTARROW;
-	}
-	else if (dart_key == dart_enter) {
-		new_event.data1 = KEY_ENTER;
-	}
-	else if (dart_key == dart_fire) {
-		new_event.data1 = KEY_RCTRL;
-	}
-	else if (dart_key == dart_space) {
-		new_event.data1 = 0x20;
-	}
-	else if (dart_key == dart_escape) {
-		new_event.data1 = KEY_ESCAPE;
-	}
-	else if (dart_key == dart_tab) {
-		new_event.data1 = KEY_TAB;
-	}
-
 	D_PostEvent(&new_event);
 }
 
@@ -247,7 +218,7 @@ void D_Display (void)
     int				wipestart;
     int				y;
     boolean			done;
-    boolean			wipe = false;
+    boolean			wipe;
     boolean			redrawsbar;
 
     if (nodrawers)
@@ -264,13 +235,13 @@ void D_Display (void)
     }
 
     // save the current screen if about to wipe
-    /*if (gamestate != wipegamestate)
+    if (gamestate != wipegamestate)
     {
 	wipe = true;
 	wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
     }
     else
-	wipe = false;*/
+	wipe = false;
 
     if (gamestate == GS_LEVEL && gametic)
 	HU_Erase();
@@ -368,7 +339,7 @@ void D_Display (void)
     }
     
     // wipe update
-    /*wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
+    wipe_EndScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
 
     wipestart = I_GetTime () - 1;
 
@@ -385,7 +356,7 @@ void D_Display (void)
 	I_UpdateNoBlit ();
 	M_Drawer ();                            // menu is drawn even on top of wipes
 	I_FinishUpdate ();                      // page flip or blit buffer
-    } while (!done);*/
+    } while (!done);
 }
 
 
@@ -437,7 +408,6 @@ void D_DoomLoop (void)
 
 	// Update display, next frame, with current state.
 	D_Display ();
-	notifyDartFrameReady();
 
 #ifndef SNDSERV
 	// Sound mixing for the buffer is snychronous.
@@ -793,6 +763,15 @@ void FindResponseFile (void)
 
 
 void FlutterDoomStart(char* wad_path, byte* external_fb, uint32_t* _external_palette) {
+
+	strcpy(save_path, wad_path);
+	char* last_slash = strrchr(save_path, '/');
+	if (last_slash != NULL && last_slash != save_path && strlen(save_path) != 1) {
+		*last_slash = '\0';
+	}
+
+	LOG("SAVE PATH: %s", save_path);
+
 	external_palette = _external_palette;
 
 	pthread_t doom_thread;

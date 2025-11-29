@@ -75,7 +75,7 @@ rcsid[] = "$Id: g_game.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 #define SAVEGAMESIZE	0x2c000
 #define SAVESTRINGSIZE	24
 
-
+extern char save_path[1000];
 
 boolean	G_CheckDemoStatus (void); 
 void	G_ReadDemoTiccmd (ticcmd_t* cmd); 
@@ -1270,16 +1270,17 @@ G_SaveGame
  
 void G_DoSaveGame (void) 
 { 
-    char	name[100]; 
+    char	name[1000]; 
     char	name2[VERSIONSIZE]; 
     char*	description; 
     int		length; 
     int		i; 
-	
+    
     if (M_CheckParm("-cdrom"))
 	sprintf(name,"c:\\doomdata\\"SAVEGAMENAME"%d.dsg",savegameslot);
     else
-	sprintf (name,SAVEGAMENAME"%d.dsg",savegameslot); 
+	sprintf (name,"%s/"SAVEGAMENAME"%d.dsg", save_path, savegameslot);
+
     description = savedescription; 
 	 
     save_p = savebuffer = screens[1]+0x4000; 
