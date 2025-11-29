@@ -20,4 +20,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - doom1.wad
+    - assets/doom1.wad
+  fonts:
+    - family: BigBlue_TerminalPlus
+      fonts:
+        - asset: assets/BigBlue_Terminal_v1.0/BigBlue_TerminalPlus.TTF
