@@ -6,7 +6,7 @@ A new Doom port based on the original 1997 source code, built for Android, iOS, 
 
 For comprehensive details on how it was made, I created a highly detailed post on my blog.
 
-https://bitsparkle.dev/post/flutter-doom
+https://bitsparkle.dev/post/flutter-doom/
 
 ## How to build
 
